@@ -1043,7 +1043,6 @@ class my_build_ext(build_ext):
         if sys.version_info > (2,6) and sys.version_info < (3, 3):
             # only stuff built with msvc9 needs this loader.
             self._build_pycom_loader()
-        self._build_scintilla()
 
     def build_exefile(self, ext):
         sources = ext.sources
@@ -2400,7 +2399,7 @@ packages=['win32com',
           'pythonwin.pywin.framework.editor.color',
           'pythonwin.pywin.idle',
           'pythonwin.pywin.mfc',
-          'pythonwin.pywin.scintilla',
+#          'pythonwin.pywin.scintilla',
           'pythonwin.pywin.tools',
           'isapi',
           'adodbapi',
