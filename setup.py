@@ -2364,7 +2364,6 @@ if len(sys.argv)==1:
 
 packages=['win32com',
           'win32com.client',
-          'win32com.demos',
           'win32com.makegw',
           'win32com.server',
           'win32com.servers',
@@ -2452,75 +2451,7 @@ dist = setup(name="pywin32",
       packages = packages,
       py_modules = py_modules,
 
-      data_files=[('', (os.path.join(gettempdir(),'pywin32.version.txt'),))] + 
-        convert_optional_data_files([
-                'PyWin32.chm',
-                ]) + 
-        convert_data_files([
-                'pythonwin/pywin/*.cfg',
-                'pythonwin/pywin/Demos/*.py',
-                'pythonwin/pywin/Demos/app/*.py',
-                'pythonwin/pywin/Demos/ocx/*.py',
-                'pythonwin/license.txt',
-                'win32/license.txt',
-                'win32/scripts/*.py',
-                'win32/test/*.py',
-                'win32/test/win32rcparser/test.rc',
-                'win32/test/win32rcparser/test.h',
-                'win32/test/win32rcparser/python.ico',
-                'win32/test/win32rcparser/python.bmp',
-                'win32/Demos/*.py',
-                'win32/Demos/images/*.bmp',
-                'com/win32com/readme.htm',
-                # win32com test utility files.
-                'com/win32com/test/*.idl',
-                'com/win32com/test/*.js',
-                'com/win32com/test/*.sct',
-                'com/win32com/test/*.txt',
-                'com/win32com/test/*.vbs',
-                'com/win32com/test/*.xsl',
-                # win32com docs
-                'com/win32com/HTML/*.html',
-                'com/win32com/HTML/image/*.gif',
-                'com/win32comext/adsi/demos/*.py',
-                # Active Scripting test and demos.
-                'com/win32comext/axscript/test/*.html',
-                'com/win32comext/axscript/test/*.py',
-                'com/win32comext/axscript/test/*.pys',
-                'com/win32comext/axscript/test/*.vbs',
-                'com/win32comext/axscript/Demos/*.pys',
-                'com/win32comext/axscript/Demos/*.htm*',
-                'com/win32comext/axscript/Demos/*.gif',
-                'com/win32comext/axscript/Demos/*.asp',
-                'com/win32comext/mapi/demos/*.py',
-                'com/win32comext/propsys/test/*.py',
-                'com/win32comext/shell/test/*.py',
-                'com/win32comext/shell/demos/servers/*.py',
-                'com/win32comext/shell/demos/*.py',
-                'com/win32comext/taskscheduler/test/*.py',
-                'com/win32comext/ifilter/demo/*.py',
-                'com/win32comext/authorization/demos/*.py',
-                'com/win32comext/bits/test/*.py',
-                'isapi/*.txt',
-                'isapi/samples/*.py',
-                'isapi/samples/*.txt',
-                'isapi/doc/*.html',
-                'isapi/test/*.py',
-                'isapi/test/*.txt',
-                'adodbapi/*.txt',
-                'adodbapi/test/*.py',
-                'adodbapi/examples/*.py'
-        ]) +
-                # The headers and .lib files
-                [
-                    ('win32/include',    ('win32/src/PyWinTypes.h',)),
-                    ('win32com/include', ('com/win32com/src/include/PythonCOM.h',
-                                         'com/win32com/src/include/PythonCOMRegister.h',
-                                         'com/win32com/src/include/PythonCOMServer.h'))
-                ] +
-                # And data files convert_data_files can't handle.
-                [
-                    ('win32com', ('com/License.txt',)),
+      data_files = [
                     # pythoncom.py doesn't quite fit anywhere else.
                     # Note we don't get an auto .pyc - but who cares?
                     ('', ('com/pythoncom.py',)),
