@@ -1,6 +1,7 @@
 EXPORTS
-	DllCanUnloadNow     @1 PRIVATE
-	DllGetClassObject   @2 PRIVATE
+	DllCanUnloadNow     PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServerEx PRIVATE
 
 	; Some exports for clients who may "LoadLibrary"...
 	PyCom_VariantFromPyObject
