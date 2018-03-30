@@ -1044,20 +1044,6 @@ class my_build_ext(build_ext):
             # only stuff built with msvc9 needs this loader.
             self._build_pycom_loader()
         self._build_scintilla()
-        # Copy cpp lib files needed to create Python COM extensions
-        clib_files = (['win32', 'pywintypes%s.lib'],
-                      ['win32com', 'pythoncom%s.lib'],
-                      ['win32com', 'axscript%s.lib'])
-        for clib_file in clib_files:
-            target_dir = os.path.join(self.build_lib, clib_file[0], "libs")
-            if not os.path.exists(target_dir):
-                self.mkpath(target_dir)
-            suffix = ""
-            if self.debug:
-                suffix = "_d"
-            fname = clib_file[1] % suffix
-            self.copy_file(
-                    os.path.join(self.build_temp, fname), target_dir)
         # The MFC DLLs.
         target_dir = os.path.join(self.build_lib, "pythonwin")
         if sys.hexversion < 0x2060000:
