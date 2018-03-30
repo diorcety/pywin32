@@ -623,7 +623,7 @@ class WinExt_win32com_axdebug(WinExt_win32com):
 # A hacky extension class for pywintypesXX.dll and pythoncomXX.dll
 class WinExt_system32(WinExt):
     def get_pywin32_dir(self):
-        return "pywin32_system32"
+        return "win32"
 
 ################################################################
 # Extensions to the distutils commands.
@@ -966,7 +966,7 @@ class my_build_ext(build_ext):
         src = r"com\win32com\src\PythonCOMLoader.cpp"
         build_temp = os.path.abspath(self.build_temp)
         obj = os.path.join(build_temp, os.path.splitext(src)[0]+".obj")
-        dll = os.path.join(self.build_lib, "pywin32_system32", "pythoncomloader"+suffix+".dll")
+        dll = os.path.join(self.build_lib, "win32", "pythoncomloader"+suffix+".dll")
         if self.force or newer_group([src], obj, 'newer'):
             ccargs = [self.compiler.cc, '/c']
             if self.debug:
@@ -1304,14 +1304,14 @@ class my_build_ext(build_ext):
         # output name is simply 'dir\name' we need to nothing.
 
         # The pre 3.1 pywintypes
-        if name == "pywin32_system32.pywintypes":
-            return r"pywin32_system32\pywintypes%d%d%s" % (sys.version_info[0], sys.version_info[1], extra_dll)
+        if name == "win32.pywintypes":
+            return r"win32\pywintypes%d%d%s" % (sys.version_info[0], sys.version_info[1], extra_dll)
         # 3.1+ pywintypes
         elif name == "pywintypes":
             return r"pywintypes%d%d%s" % (sys.version_info[0], sys.version_info[1], extra_dll)
         # pre 3.1 pythoncom
-        elif name == "pywin32_system32.pythoncom":
-            return r"pywin32_system32\pythoncom%d%d%s" % (sys.version_info[0], sys.version_info[1], extra_dll)
+        elif name == "win32.pythoncom":
+            return r"win32\pythoncom%d%d%s" % (sys.version_info[0], sys.version_info[1], extra_dll)
         # 3.1+ pythoncom
         elif name == "pythoncom":
             return r"pythoncom%d%d%s" % (sys.version_info[0], sys.version_info[1], extra_dll)
@@ -1439,29 +1439,6 @@ class my_build_ext(build_ext):
 class my_install(install):
     def run(self):
         install.run(self)
-        # Custom script we run at the end of installing - this is the same script
-        # run by bdist_wininst
-        # This child process won't be able to install the system DLLs until our
-        # process has terminated (as distutils imports win32api!), so we must use
-        # some 'no wait' executor - spawn seems fine!  We pass the PID of this
-        # process so the child will wait for us.
-        # XXX - hmm - a closer look at distutils shows it only uses win32api
-        # if _winreg fails - and this never should.  Need to revisit this!
-        # If self.root has a value, it means we are being "installed" into
-        # some other directory than Python itself (eg, into a temp directory
-        # for bdist_wininst to use) - in which case we must *not* run our
-        # installer
-        if not self.dry_run and not self.root:
-            # We must run the script we just installed into Scripts, as it
-            # may have had 2to3 run over it.
-            filename = os.path.join(self.prefix, "Scripts", "pywin32_postinstall.py")
-            if not os.path.isfile(filename):
-                raise RuntimeError("Can't find '%s'" % (filename,))
-            print("Executing post install script...")
-            # What executable to use?  This one I guess.
-            os.spawnl(os.P_NOWAIT, sys.executable,
-                      sys.executable, filename,
-                      "-quiet", "-wait", str(os.getpid()), "-install")
 
 # As per get_source_files, we need special handling so .mc file is
 # processed first.  It appears there was an intention to fix distutils
@@ -2531,17 +2508,6 @@ dist = setup(name="pywin32",
       url="https://github.com/mhammond/pywin32",
       license="PSF",
       cmdclass = cmdclass,
-      options = {"bdist_wininst":
-                    {"install_script": "pywin32_postinstall.py",
-                     "title": "pywin32-%s" % (build_id,),
-                     "user_access_control": "auto",
-                    },
-                 "bdist_msi":
-                    {"install_script": "pywin32_postinstall.py",
-                    },
-                },
-
-      scripts = ["pywin32_postinstall.py", "pywin32_testall.py"],
 
       ext_modules = ext_modules,
 
