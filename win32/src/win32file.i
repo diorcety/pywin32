@@ -92,6 +92,10 @@ typedef struct {
 #endif
 %}
 
+#define FIONBIO FIONBIO
+#define FIONREAD FIONREAD
+#define SIOCATMARK SIOCATMARK
+
 #define FILE_GENERIC_READ FILE_GENERIC_READ
 #define FILE_GENERIC_WRITE FILE_GENERIC_WRITE
 #define FILE_ALL_ACCESS FILE_ALL_ACCESS
@@ -2262,6 +2266,61 @@ PyObject* MyWSAEventSelect
 	SOCKET *s, // @pyparm <o PySocket>|socket||socket to attach to the event
 	PyHANDLE hEvent, // @pyparm <o PyHandle>|hEvent||Event handle for the socket to become attached to.
 	LONG lNetworkEvents // @pyparm int|networkEvents||A bitmask of network events that will cause hEvent to be signaled. e.g. (FD_CLOSE \| FD_READ)
+);
+
+%{
+PyObject* Myioctlsocket
+(
+	SOCKET *s,
+	LONG cmd,
+	ULONG arg
+)
+{
+	int rc;
+	unsigned long _arg = arg;
+	Py_BEGIN_ALLOW_THREADS;
+	rc = ioctlsocket(*s, cmd, &_arg);
+	Py_END_ALLOW_THREADS;
+	if (rc == SOCKET_ERROR)
+	{
+		PyWin_SetAPIError("ioctlsocket", WSAGetLastError());
+		return NULL;
+	}
+	return PyLong_FromUnsignedLong(arg);
+}
+
+%}
+
+// @pyswig |ioctlsocket|The ioctlsocket function controls the I/O mode of a socket.
+%name(ioctlsocket) PyObject *Myioctlsocket
+(
+	SOCKET *s, // @pyparm <o PySocket>|socket||A descriptor identifying a socket.
+	LONG cmd, // @pyparm int|cmd||A command to perform on the socket s.
+	ULONG arg // @pyparm int|arg||parameter for cmd.
+);
+
+%{
+PyObject* MyWSACreateEvent
+(
+)
+{
+	WSAEVENT event;
+	Py_BEGIN_ALLOW_THREADS;
+	event = WSACreateEvent();
+	Py_END_ALLOW_THREADS;
+	if (event == WSA_INVALID_EVENT)
+	{
+		PyWin_SetAPIError("MyWSACreateEvent", WSAGetLastError());
+		return NULL;
+	}
+	return PyWinObject_FromHANDLE(event);
+}
+
+%}
+
+// @pyswig |WSACreateEvent|Creates a new event object.
+%name(WSACreateEvent) PyObject *MyWSACreateEvent
+(
 );
 
 %native(WSAEnumNetworkEvents) MyWSAEnumNetworkEvents;
