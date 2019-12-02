@@ -140,7 +140,7 @@ if not "." in build_id_patch:
     build_id_patch = build_id_patch + ".0"
 pywin32_version="%d.%d.%s" % (sys.version_info[0], sys.version_info[1],
                               build_id_patch)
-print("Building pywin32", pywin32_version)
+print("Building pywin32", pywin32_version, file=sys.stderr)
 
 try:
     this_file = __file__
